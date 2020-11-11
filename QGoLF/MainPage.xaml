@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:local="clr-namespace:QGoLF"
+             x:Class="QGoLF.MainPage">
+
+    <Grid Margin="5"
+          ColumnSpacing="5"
+          RowSpacing="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Button x:Name="initButton"
+                Text="Initialize ⋯"
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalOptions="FillAndExpand"
+                Clicked="InitButton_Clicked"
+                FontAttributes="Bold"
+                FontSize="Medium"/>
+        <Button x:Name="stepButton"
+                Text="STEP >"
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalOptions="FillAndExpand"
+                Clicked="StepButton_Clicked"
+                FontAttributes="Bold"
+                FontSize="Medium"/>
+        <Button x:Name="astepButton"
+                Text="AUTO STEP ≫"
+                Grid.Row="0"
+                Grid.Column="2"
+                HorizontalOptions="FillAndExpand"
+                Clicked="AStepButton_Clicked"
+                FontAttributes="Bold"
+                FontSize="Medium"/>
+        <Button x:Name="resetButton"
+                Text="RESET □"
+                Grid.Row="0"
+                Grid.Column="3"
+                HorizontalOptions="FillAndExpand"
+                Clicked="ResetButton_Clicked"
+                FontAttributes="Bold"
+                FontSize="Medium"/>
+        <Label x:Name="titleLabel"
+               Text=""
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"
+               Grid.Row="1"
+               Grid.Column="0"
+               Grid.ColumnSpan="4"
+               FontAttributes="Bold"/>
+        <skia:SKCanvasView x:Name="canvasView"
+                           BackgroundColor="White"
+                           PaintSurface="CanvasView_PaintSurface"
+                           Touch="CanvasView_Touch"
+                           Grid.Row="2"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="4"/>
+
+    </Grid>
+    
+</ContentPage>
