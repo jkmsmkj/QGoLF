@@ -142,8 +142,8 @@ namespace QGoLF
                 ayLim[1] = (int)Math.Floor(canvas.LocalClipBounds.Bottom / 50.0) * 50;
                 if(!initButton.Text.Equals("Done •"))
                 {
-                    px = 25 + (axLim[1] - axLim[0]) / 2;
-                    py = 25 + (ayLim[1] - ayLim[0]) / 2;
+                    px = 25 + ((axLim[1] - axLim[0]) / 2);
+                    py = 25 + ((ayLim[1] - ayLim[0]) / 2);
                     Ccells.Clear();
                     Ccells.Add(new int[] { px, py });
                     Fcells.Clear();
@@ -154,12 +154,12 @@ namespace QGoLF
                 }
                 scale = Math.Min((float)(canvas.LocalClipBounds.Width / axLim[1]), (float)(canvas.LocalClipBounds.Height / ayLim[1]));
                 canvas.Scale(scale, scale, canvas.LocalClipBounds.MidX, canvas.LocalClipBounds.MidY);
-                canvas.Translate(canvas.LocalClipBounds.Left- axLim[0], canvas.LocalClipBounds.Top- ayLim[0]);
+                canvas.Translate(canvas.LocalClipBounds.Left - axLim[0], canvas.LocalClipBounds.Top - ayLim[0]);
             }
             else
             {
                 canvas.Scale(scale, scale, canvas.LocalClipBounds.MidX, canvas.LocalClipBounds.MidY);
-                canvas.Translate(canvas.LocalClipBounds.Left- axLim[0], canvas.LocalClipBounds.Top- ayLim[0]);
+                canvas.Translate(canvas.LocalClipBounds.Left - axLim[0], canvas.LocalClipBounds.Top - ayLim[0]);
                 ind = rndNum.Next(0, Fcells.Count);
                 px = Fcells[ind][0] - 25;
                 py = Fcells[ind][1] - 25;
@@ -192,11 +192,11 @@ namespace QGoLF
             }
             
             canvas.DrawRect(canvas.LocalClipBounds, blackLines);
-            for (int i = axLim[0]; i <= axLim[1]; i += 50)
+            for (int i = axLim[0]; i <= canvas.LocalClipBounds.Right; i += 50)
             {
                 canvas.DrawLine(i, canvas.LocalClipBounds.Top, i, canvas.LocalClipBounds.Bottom, blackLines); //ayLim[s]
             }
-            for (int i = ayLim[0]; i <= ayLim[1]; i += 50)
+            for (int i = ayLim[0]; i <= canvas.LocalClipBounds.Bottom; i += 50)
             {
                 canvas.DrawLine(canvas.LocalClipBounds.Left, i, canvas.LocalClipBounds.Right, i, blackLines); //axLim[s]
             }
