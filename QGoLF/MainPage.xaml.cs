@@ -122,6 +122,7 @@ namespace QGoLF
                 }
             }
         }
+
         private void CanvasView_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             SKSurface surface = e.Surface;
@@ -130,8 +131,8 @@ namespace QGoLF
             //canvas.Save();
             //canvas.Restore();
 
-            int px;
-            int py;
+            int px=0;
+            int py=0;
             int ind;
             
             if (iters == 0)
@@ -140,10 +141,24 @@ namespace QGoLF
                 axLim[1] = (int)Math.Floor(canvas.LocalClipBounds.Right / 50.0) * 50;
                 ayLim[0] = 0;
                 ayLim[1] = (int)Math.Floor(canvas.LocalClipBounds.Bottom / 50.0) * 50;
-                if(!initButton.Text.Equals("Done •"))
+                if (!initButton.Text.Equals("Done •") || Ccells.Count==0)
                 {
-                    px = 25 + ((axLim[1] - axLim[0]) / 2);
-                    py = 25 + ((ayLim[1] - ayLim[0]) / 2);
+                    if (Math.IEEERemainder((axLim[1] - axLim[0]) / 2, 50) == 0)
+                    {
+                        px = (axLim[1] - axLim[0]) / 2;
+                    }
+                    else
+                    {
+                        px = 25 + ((axLim[1] - axLim[0]) / 2); 
+                    }
+                    if (Math.IEEERemainder((ayLim[1] - ayLim[0]) / 2, 50) == 0)
+                    {
+                        py = (ayLim[1] - ayLim[0]) / 2;
+                    }
+                    else
+                    {
+                        py = 25 + ((ayLim[1] - ayLim[0]) / 2); 
+                    }
                     Ccells.Clear();
                     Ccells.Add(new int[] { px, py });
                     Fcells.Clear();
@@ -243,16 +258,16 @@ namespace QGoLF
             if(initButton.Text.Equals("Initialize ⋯"))
             {
                 iters = 0;
-                initButton.Text = "Done •";
+                Ccells.Clear(); // Used as a flag to "reset" the canvas upon initialization!
+                canvasView.InvalidateSurface();
                 stepButton.IsEnabled = false;
                 astepButton.IsEnabled = false;
                 resetButton.IsEnabled = false;
-                canvasView.InvalidateSurface();
                 canvasView.EnableTouchEvents = true;
+                initButton.Text = "Done •";
             }
             else
             {
-                initButton.Text = "Initialize ⋯";
                 canvasView.EnableTouchEvents = false;
                 if (Ccells.Count != 0)
                 {
@@ -260,6 +275,7 @@ namespace QGoLF
                     astepButton.IsEnabled = true;
                     resetButton.IsEnabled = true;
                 }
+                initButton.Text = "Initialize ⋯";
             }
         }
 
