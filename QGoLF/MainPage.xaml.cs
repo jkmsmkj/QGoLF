@@ -43,6 +43,7 @@ namespace QGoLF
         readonly Random rndNum = new Random();
         List<int[]> Ccells = new List<int[]>(); // Covered cells in this call
         List<int[]> Fcells = new List<int[]>(); // Free cells for the next call
+        List<int[]> Scells = new List<int[]>(); // Covered cells with no free cells around
         int iters = 0;
         bool autoStop = false;
         float scale = 1;
@@ -62,6 +63,7 @@ namespace QGoLF
 
         private void InitFunc(SKPoint eLoc)
         {
+            List<int> ind4Scells = new List<int>();
             int px = (int)Math.Floor(eLoc.X / 50.0) * 50;
             int py = (int)Math.Floor(eLoc.Y / 50.0) * 50;
             int ind = Ccells.FindIndex(item => item[0] == px && item[1] == py);
@@ -69,48 +71,58 @@ namespace QGoLF
             {
                 Ccells.RemoveAt(ind);
                 //Take care of left cell
-                if (Ccells.Any(p => p.SequenceEqual(new int[] { px - 50, py + 0 })))
+                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px - 50, py + 0 })))
+                if (Ccells.Any(p => p[0]==px - 50 && p[1]==py + 0 ))
                 {
-                    Fcells.Add(new int[] { px + 25, py + 25 });
+                    Fcells.Add(new int[] { px + 25, py + 25, iters });
                 }
                 ind = Fcells.FindIndex(item => item[0] == px - 25 && item[1] == py + 25);
                 if (ind >= 0) Fcells.RemoveAt(ind);
                 //Take care of bottom cell
-                if (Ccells.Any(p => p.SequenceEqual(new int[] { px - 0, py + 50 })))
+                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px - 0, py + 50 })))
+                if (Ccells.Any(p => p[0]== px - 0 && p[1]==py + 50 ))
                 {
-                    Fcells.Add(new int[] { px + 25, py + 25 });
+                    Fcells.Add(new int[] { px + 25, py + 25, iters });
                 }
                 ind = Fcells.FindIndex(item => item[0] == px + 25 && item[1] == py + 75);
                 if (ind >= 0) Fcells.RemoveAt(ind);
                 //Take care of left cell
-                if (Ccells.Any(p => p.SequenceEqual(new int[] { px + 50, py - 0 })))
+                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px + 50, py - 0 })))
+                if (Ccells.Any(p => p[0]== px + 50 && p[1]== py - 0 ))
                 {
-                    Fcells.Add(new int[] { px + 25, py + 25 });
+                    Fcells.Add(new int[] { px + 25, py + 25, iters });
                 }
                 ind = Fcells.FindIndex(item => item[0] == px + 75 && item[1] == py + 25);
                 if (ind >= 0) Fcells.RemoveAt(ind);
                 //Take care of top cell
-                if (Ccells.Any(p => p.SequenceEqual(new int[] { px + 0, py - 50 })))
+                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px + 0, py - 50 })))
+                if (Ccells.Any(p => p[0]==px + 0 && p[1]==py - 50 ))
                 {
-                    Fcells.Add(new int[] { px + 25, py + 25 });
+                    Fcells.Add(new int[] { px + 25, py + 25, iters });
                 }
                 ind = Fcells.FindIndex(item => item[0] == px + 25 && item[1] == py - 25);
                 if (ind >= 0) Fcells.RemoveAt(ind);
             }
             else
             {
-                Ccells.Add(new int[] { px, py });
+                Ccells.Add(new int[] { px, py, iters });
+                foreach(int[] m in Fcells.FindAll(item => item[0] == px + 25 && item[1] == py + 25))
+                {
+                    if (m[2] != 0)
+                    {
+                        ind4Scells.Add(m[2]);
+                    }
+                }
                 Fcells.RemoveAll(item => item[0] == px + 25 && item[1] == py + 25);
-                Fcells.Add(new int[] { px - 25, py + 25 });
-                Fcells.Add(new int[] { px + 25, py + 75 });
-                Fcells.Add(new int[] { px + 75, py + 25 });
-                Fcells.Add(new int[] { px + 25, py - 25 });
+                Fcells.Add(new int[] { px - 25, py + 25, iters });
+                Fcells.Add(new int[] { px + 25, py + 75, iters });
+                Fcells.Add(new int[] { px + 75, py + 25, iters });
+                Fcells.Add(new int[] { px + 25, py - 25, iters });
                 List<int> mtd = new List<int>();
                 for (int m = 4; m > 0; m--)
                 {
                     int[] Fxy = { Fcells[Fcells.Count - m][0], Fcells[Fcells.Count - m][1] };
-                    bool cov = Ccells.Any(p => p.SequenceEqual(new int[] { Fxy[0] - 25, Fxy[1] - 25 }));
-                    if (cov)
+                    if (Ccells.Any(item => item[0] == Fxy[0] - 25 && item[1] == Fxy[1] - 25))
                     {
                         mtd.Add(m);
                     }
@@ -118,7 +130,22 @@ namespace QGoLF
                 foreach (int m in mtd)
                 {
                     int[] Fxy = { Fcells[Fcells.Count - m][0], Fcells[Fcells.Count - m][1] };
+                    foreach (int[] mm in Fcells.FindAll(item => item[0] == Fxy[0] && item[1] == Fxy[1]))
+                    {
+                        if (mm[2] != 0)
+                        {
+                            ind4Scells.Add(mm[2]);
+                        }
+                    }
                     Fcells.RemoveAll(item => item[0] == Fxy[0] && item[1] == Fxy[1]);
+                }
+                foreach (int m in ind4Scells.Distinct())
+                {
+                    if (!Fcells.Any(item => item[2] == m))
+                    {
+                        Scells.AddRange(Ccells.FindAll(item => item[2] == m));
+                        Ccells.RemoveAll(item => item[2] == m);
+                    }
                 }
             }
         }
@@ -160,12 +187,13 @@ namespace QGoLF
                         py = 25 + ((ayLim[1] - ayLim[0]) / 2); 
                     }
                     Ccells.Clear();
-                    Ccells.Add(new int[] { px, py });
+                    Scells.Clear();
+                    Ccells.Add(new int[] { px, py, iters });
                     Fcells.Clear();
-                    Fcells.Add(new int[] { px - 25, py + 25 });
-                    Fcells.Add(new int[] { px + 25, py + 75 });
-                    Fcells.Add(new int[] { px + 75, py + 25 });
-                    Fcells.Add(new int[] { px + 25, py - 25 });
+                    Fcells.Add(new int[] { px - 25, py + 25, iters });
+                    Fcells.Add(new int[] { px + 25, py + 75, iters });
+                    Fcells.Add(new int[] { px + 75, py + 25, iters });
+                    Fcells.Add(new int[] { px + 25, py - 25, iters });
                 }
                 scale = Math.Min((float)(canvas.LocalClipBounds.Width / axLim[1]), (float)(canvas.LocalClipBounds.Height / ayLim[1]));
                 canvas.Scale(scale, scale, canvas.LocalClipBounds.MidX, canvas.LocalClipBounds.MidY);
@@ -216,6 +244,10 @@ namespace QGoLF
                 canvas.DrawLine(canvas.LocalClipBounds.Left, i, canvas.LocalClipBounds.Right, i, blackLines); //axLim[s]
             }
 
+            foreach (int[] pxy in Scells)
+            {
+                canvas.DrawRect(pxy[0] + 2, pxy[1] + 2, 48, 48, grayFillPaint);
+            }
             foreach (int[] pxy in Ccells)
             {
                 canvas.DrawRect(pxy[0]+2, pxy[1]+2, 48, 48, blueFillPaint);
@@ -224,12 +256,6 @@ namespace QGoLF
             {
                 canvas.DrawPoints(SKPointMode.Points, new SKPoint[] { new SKPoint(pxy[0], pxy[1]) }, redDots);
             }
-            //    Dcells = setdiff(1:app.Iters, unique(app.Fcells(:, 3)));
-            //    if ~isempty(Dcells)
-            //        app.Ccells(logical(sum(app.Ccells(:, 3) == Dcells, 2)),:) =[];
-            //        ListPcs = app.QGaxes.Children(strcmpi(get(app.QGaxes.Children, 'Type'), 'patch'));
-            //        set(ListPcs(cellfun(@(x)logical(sum(x == Dcells)), get(ListPcs, 'UserData'))), 'FaceColor', 'black');
-            //    end
             titleLabel.Text = "H = " + Hness.ToString("F4") + " (Step " + iters + ")";
         }
 
