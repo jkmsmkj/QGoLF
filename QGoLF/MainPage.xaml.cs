@@ -12,29 +12,26 @@ namespace QGoLF
 {
     public partial class MainPage : ContentPage
     {
-        SKPaint blackLines = new SKPaint
+        readonly SKPaint blackLines = new SKPaint
         {
             Style = SKPaintStyle.Stroke,
             Color = SKColors.Black,
             StrokeWidth = 5,
             StrokeCap = SKStrokeCap.Square
         };
-
-        SKPaint blueFillPaint = new SKPaint
+        readonly SKPaint blueFillPaint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
             Color = SKColors.Blue.WithAlpha(0x80),
         };
-
-        SKPaint redDots = new SKPaint
+        readonly SKPaint redDots = new SKPaint
         {
             Style = SKPaintStyle.Fill,
             Color = SKColors.Red,
             StrokeWidth = 6,
             StrokeCap = SKStrokeCap.Round
         };
-
-        SKPaint grayFillPaint = new SKPaint
+        readonly SKPaint grayFillPaint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
             Color = SKColors.Gray.WithAlpha(0x80),
@@ -49,7 +46,7 @@ namespace QGoLF
         float scale = 1;
         int[] axLim = new int[2];
         int[] ayLim = new int[2];
-        private static readonly BindableProperty HnessProperty = BindableProperty.Create("Hness", typeof(float), typeof(MainPage), null);
+        //private static readonly BindableProperty HnessProperty = BindableProperty.Create("Hness", typeof(float), typeof(MainPage), null);
         float Hness
         {
             get { return (float)Fcells.Count/Ccells.Count; }
@@ -71,15 +68,13 @@ namespace QGoLF
             {
                 Ccells.RemoveAt(ind);
                 //Take care of left cell
-                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px - 50, py + 0 })))
-                if (Ccells.Any(p => p[0]==px - 50 && p[1]==py + 0 ))
+                if (Ccells.Any(p => p[0]==px - 50 && p[1]==py + 0 )) //p.SequenceEqual(new int[] { px - 50, py + 0 })
                 {
                     Fcells.Add(new int[] { px + 25, py + 25, iters });
                 }
                 ind = Fcells.FindIndex(item => item[0] == px - 25 && item[1] == py + 25);
                 if (ind >= 0) Fcells.RemoveAt(ind);
                 //Take care of bottom cell
-                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px - 0, py + 50 })))
                 if (Ccells.Any(p => p[0]== px - 0 && p[1]==py + 50 ))
                 {
                     Fcells.Add(new int[] { px + 25, py + 25, iters });
@@ -87,7 +82,6 @@ namespace QGoLF
                 ind = Fcells.FindIndex(item => item[0] == px + 25 && item[1] == py + 75);
                 if (ind >= 0) Fcells.RemoveAt(ind);
                 //Take care of left cell
-                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px + 50, py - 0 })))
                 if (Ccells.Any(p => p[0]== px + 50 && p[1]== py - 0 ))
                 {
                     Fcells.Add(new int[] { px + 25, py + 25, iters });
@@ -95,7 +89,6 @@ namespace QGoLF
                 ind = Fcells.FindIndex(item => item[0] == px + 75 && item[1] == py + 25);
                 if (ind >= 0) Fcells.RemoveAt(ind);
                 //Take care of top cell
-                //if (Ccells.Any(p => p.SequenceEqual(new int[] { px + 0, py - 50 })))
                 if (Ccells.Any(p => p[0]==px + 0 && p[1]==py - 50 ))
                 {
                     Fcells.Add(new int[] { px + 25, py + 25, iters });
@@ -334,7 +327,6 @@ namespace QGoLF
                         initButton.IsEnabled = true;
                         stepButton.IsEnabled = true;
                         resetButton.IsEnabled = true;
-                        //autoStop = true; 
                         return false;
                     }
                 });
@@ -357,6 +349,5 @@ namespace QGoLF
             stepButton.IsEnabled = true;
             resetButton.IsEnabled = true;
         }
-
     }
 }
