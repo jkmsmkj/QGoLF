@@ -22,7 +22,7 @@ namespace QGoLF
         readonly SKPaint blueFillPaint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
-            Color = SKColors.Blue.WithAlpha(0x80),
+            Color = SKColors.Blue.WithAlpha(0x80)
         };
         readonly SKPaint redDots = new SKPaint
         {
@@ -34,9 +34,17 @@ namespace QGoLF
         readonly SKPaint grayFillPaint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
-            Color = SKColors.Gray.WithAlpha(0x80),
+            Color = SKColors.Gray.WithAlpha(0x80)
         };
-
+        //readonly SKPaint textPaint = new SKPaint
+        //{
+        //    TextSize = 32.0f,
+        //    IsAntialias = true,
+        //    Color = SKColors.White,
+        //    TextAlign = SKTextAlign.Center
+        //};
+        //This text style can be used with canvas.DrawText(⋯)
+        
         readonly Random rndNum = new Random();
         List<int[]> Ccells = new List<int[]>(); // Covered cells in this call
         List<int[]> Fcells = new List<int[]>(); // Free cells for the next call
@@ -98,6 +106,10 @@ namespace QGoLF
             }
             else
             {
+                if (iters!=0 && Ccells[Ccells.Count-1][2] == iters) //Due to fast processing, multiple calls can be made at same 'iters'?!?!
+                {
+                    return;
+                }
                 Ccells.Add(new int[] { px, py, iters });
                 foreach(int[] m in Fcells.FindAll(item => item[0] == px + 25 && item[1] == py + 25))
                 {
@@ -202,7 +214,7 @@ namespace QGoLF
                 InitFunc(new SKPoint(px, py));
             }
             
-            if (Fcells.Exists(item => item[0] < axLim[0] || item[0] > axLim[1]))
+            if (iters!=0 && (Fcells.Exists(item => item[0] < axLim[0] || item[0] > axLim[1])))
             {
                 axLim[0] -= 250;
                 axLim[1] += 250;
@@ -214,7 +226,7 @@ namespace QGoLF
                 canvas.Translate(canvas.LocalClipBounds.Left - axLim[0], canvas.LocalClipBounds.Top - ayLim[0]);
                 scale *= LocScale;
             }
-            if(Fcells.Exists(item => item[1] < ayLim[0] || item[1] > ayLim[1]))
+            if(iters!=0 && (Fcells.Exists(item => item[1] < ayLim[0] || item[1] > ayLim[1])))
             {
                 ayLim[0] -= 250;
                 ayLim[1] += 250;
